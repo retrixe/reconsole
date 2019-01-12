@@ -2,6 +2,7 @@ package com.reconsole.ReConsole;
 
 // Plugin related imports.
 import com.reconsole.ReConsole.Commands.EasyUptime;
+import com.reconsole.ReConsole.HttpHandlers.RootEndpoint;
 import org.bukkit.plugin.java.JavaPlugin;
 
 // Handler classes.
@@ -23,10 +24,12 @@ public class Main extends JavaPlugin {
             this.server = HttpServer.create(new InetSocketAddress("localhost", 4200), 0);
             this.server.setExecutor(null);
             this.server.createContext("/login", new Login());
+            this.server.createContext("/", new RootEndpoint());
             System.out.println("HTTP server successfully listening on port 4200.");
         } catch (IOException e) {
             System.err.println("HTTP server failed to listen on port 4200!");
         }
+        // Setup commands (this command is pretty much useless atm).
         this.getCommand("easyUptime").setExecutor(new EasyUptime(startTime));
     }
 }

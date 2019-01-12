@@ -6,9 +6,9 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class Login implements HttpHandler {
+public class RootEndpoint implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
-        String res = "This is a functional login.";
+        String res = "{\"code\": 200}";
         // Sending the response.
         exchange.sendResponseHeaders(200, res.length());
         OutputStream outputStream = exchange.getResponseBody();
