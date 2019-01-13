@@ -1,25 +1,27 @@
 package com.reconsole.ReConsole.HttpHandlers;
 
 import com.google.gson.JsonObject;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.bukkit.Server;
+
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class RootEndpoint implements HttpHandler {
-    private Server server;
-    public RootEndpoint(Server server1) { server = server1; }
+    private JavaPlugin plugin;
+    public RootEndpoint(JavaPlugin javaPlugin) { plugin = javaPlugin; }
 
     public void handle(HttpExchange exchange) throws IOException {
         // Build the JSON object.
         JsonObject json = new JsonObject();
         json.addProperty("code", 200);
         json.addProperty("online", true);
-        json.addProperty("maxPlayers", server.getMaxPlayers());
-        json.addProperty("playersOnline", server.getOnlinePlayers().size());
-        json.addProperty("versionName", server.getVersion());
+        json.addProperty("maxPlayers", plugin.getServer().getMaxPlayers());
+        json.addProperty("playersOnline", plugin.getServer().getOnlinePlayers().size());
+        json.addProperty("versionName", plugin.getServer().getVersion());
         String res = json.toString();
         // Sending the response.
         exchange.sendResponseHeaders(200, res.length());
