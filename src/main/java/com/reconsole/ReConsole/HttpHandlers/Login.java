@@ -20,6 +20,21 @@ public class Login implements HttpHandler {
     public Login(JavaPlugin javaPlugin, HashMap<String, String> tokenMap) { plugin = javaPlugin; tokens = tokenMap; }
 
     public void handle(HttpExchange exchange) throws IOException {
+        // Implement CORS on the exchange.
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", exchange.getRequestHeaders().getFirst(
+            "Origin"
+        ));
+        if (exchange.getRequestMethod().equals("OPTIONS")) {
+            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Max-Age", "86400");
+            exchange.getResponseHeaders().add(
+                "Access-Control-Allow-Headers",
+                "Origin, X-Requested-With, Content-Type, Accept, Username, Password"
+            );
+            exchange.sendResponseHeaders(200, 0);
+            exchange.close();
+            return;
+        }
         // Validate if credentials were sent, if invalid error.
         if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
             JsonObject json = new JsonObject();
@@ -28,8 +43,8 @@ public class Login implements HttpHandler {
             exchange.sendResponseHeaders(405, json.toString().length());
             exchange.getResponseBody().write(json.toString().getBytes());
             exchange.close();
-        }
-        else if (
+            return;
+        } else if (
             !exchange.getRequestHeaders().containsKey("Username") ||
             !exchange.getRequestHeaders().containsKey("Password")
         ) {
@@ -40,6 +55,7 @@ public class Login implements HttpHandler {
             exchange.sendResponseHeaders(401, json.toString().length());
             exchange.getResponseBody().write(json.toString().getBytes());
             exchange.close();
+            return;
         }
         // Call the login strategy (read from config about it first).
         // We need to support configuration of either using our own credential system to local file,
@@ -57,6 +73,7 @@ public class Login implements HttpHandler {
             exchange.sendResponseHeaders(401, json.toString().length());
             exchange.getResponseBody().write(json.toString().getBytes());
             exchange.close();
+            return;
         }
         String accessToken = "test"; // Help me issue a token pls.
         tokens.put(accessToken, exchange.getRequestHeaders().getFirst("Username"));

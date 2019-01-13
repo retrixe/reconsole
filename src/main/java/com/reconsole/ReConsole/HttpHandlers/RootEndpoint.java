@@ -15,6 +15,10 @@ public class RootEndpoint implements HttpHandler {
     public RootEndpoint(JavaPlugin javaPlugin) { plugin = javaPlugin; }
 
     public void handle(HttpExchange exchange) throws IOException {
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().add(
+            "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"
+        );
         // Build the JSON object.
         JsonObject json = new JsonObject();
         json.addProperty("code", 200);
