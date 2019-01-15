@@ -20,6 +20,8 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable () {
+        // Setup default configuration.
+        this.saveDefaultConfig();
         // Start HTTP server.
         try {
             this.server = HttpServer.create(new InetSocketAddress(4200), 0);

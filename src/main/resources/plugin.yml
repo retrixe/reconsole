@@ -1,8 +1,12 @@
 name: "ReConsole"
 version: "1.0.0-alpha.0"
 description: "A plugin to manage your Minecraft server together with a frontend."
-author: ""
-permissions:
+authors: ["Ibrahim Ansari <ansari.ibrahim1@gmail.com>", "Banica Mihai"]
 main: "com.reconsole.ReConsole.Main"
 api-version: 1.12.2
+
+# Setting up commands here.
 commands:
+
+# Setting up permissions here.
+permissions:

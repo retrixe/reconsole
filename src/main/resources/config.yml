@@ -1,0 +1,2 @@
+# Configure the login method (default: sqlite, options: sqlite)
+login-method: sqlite
