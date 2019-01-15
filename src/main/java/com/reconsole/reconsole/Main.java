@@ -1,22 +1,23 @@
-package com.reconsole.ReConsole;
+package com.reconsole.reconsole;
 
 // Plugin related imports.
 import org.bukkit.plugin.java.JavaPlugin;
 
 // Handler classes.
-import com.reconsole.ReConsole.HttpHandlers.Login;
-import com.reconsole.ReConsole.HttpHandlers.RootEndpoint;
-import com.reconsole.ReConsole.HttpHandlers.CORSWrapperHandler;
+import com.reconsole.reconsole.httphandlers.Login;
+import com.reconsole.reconsole.httphandlers.RootEndpoint;
+import com.reconsole.reconsole.httphandlers.CORSWrapperHandler;
 
 // HTTP server related imports.
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
     private HttpServer server;
-    private HashMap<String, String> tokens = new HashMap();
+    private HashMap<String, String> tokens = new HashMap<>();
 
     @Override
     public void onEnable () {
@@ -30,9 +31,9 @@ public class Main extends JavaPlugin {
             this.server.createContext("/login", login);
             this.server.createContext("/", new CORSWrapperHandler(new RootEndpoint(this)));
             this.server.start();
-            System.out.println("[ReConsole] HTTP server successfully listening on port 4200.");
+            this.getLogger().log(Level.INFO, "HTTP server successfully listening on port 4200.");
         } catch (IOException e) {
-            System.err.println("[ReConsole] HTTP server failed to listen on port 4200!");
+            this.getLogger().log(Level.SEVERE, "HTTP server failed to listen on port 4200!", e);
         }
     }
 }

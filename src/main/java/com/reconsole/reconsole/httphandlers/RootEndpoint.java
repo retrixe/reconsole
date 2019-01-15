@@ -1,4 +1,4 @@
-package com.reconsole.ReConsole.HttpHandlers;
+package com.reconsole.reconsole.httphandlers;
 
 import com.google.gson.JsonObject;
 

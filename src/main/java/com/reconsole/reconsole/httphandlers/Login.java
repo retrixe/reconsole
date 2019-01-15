@@ -1,6 +1,6 @@
-package com.reconsole.ReConsole.HttpHandlers;
+package com.reconsole.reconsole.httphandlers;
 
-import com.reconsole.ReConsole.LoginStrategies.LocalFileStrategy;
+import com.reconsole.reconsole.loginstrategies.LocalFileStrategy;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -48,7 +48,7 @@ public class Login implements HttpHandler {
         LocalFileStrategy localFileStrategy = new LocalFileStrategy(plugin);
         String password = exchange.getRequestHeaders().getFirst("Username");
         String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString(); // Hash the pass.
-        boolean valid = localFileStrategy.handle(exchange.getRequestHeaders().getFirst("Username"), hashedPass);
+        boolean valid = localFileStrategy.validate(exchange.getRequestHeaders().getFirst("Username"), hashedPass);
         // Set a token for the user in a high level HashMap if valid.
         if (!valid) {
             JsonObject json = new JsonObject();
