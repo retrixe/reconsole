@@ -1,6 +1,6 @@
 package com.reconsole.reconsole.httphandlers;
 
-import com.reconsole.reconsole.loginstrategies.LocalFileStrategy;
+import com.reconsole.reconsole.loginstrategies.TestStrategy;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -14,10 +14,10 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-public class Login implements HttpHandler {
+public class LoginEndpoint implements HttpHandler {
     private JavaPlugin plugin;
     private HashMap<String, String> tokens;
-    public Login(JavaPlugin javaPlugin, HashMap<String, String> tokenMap) { plugin = javaPlugin; tokens = tokenMap; }
+    public LoginEndpoint(JavaPlugin javaPlugin, HashMap<String, String> tokenMap) { plugin = javaPlugin; tokens = tokenMap; }
 
     public void handle(HttpExchange exchange) throws IOException {
         // Validate if credentials were sent, if invalid error.
@@ -45,10 +45,10 @@ public class Login implements HttpHandler {
         // Call the login strategy (read from config about it first).
         // We need to support configuration of either using our own credential system to local file,
         // own credential system to SQL or AuthMe local file support.
-        LocalFileStrategy localFileStrategy = new LocalFileStrategy(plugin);
+        TestStrategy testStrategy = new TestStrategy(plugin);
         String password = exchange.getRequestHeaders().getFirst("Username");
         String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString(); // Hash the pass.
-        boolean valid = localFileStrategy.validate(exchange.getRequestHeaders().getFirst("Username"), hashedPass);
+        boolean valid = testStrategy.validate(exchange.getRequestHeaders().getFirst("Username"), hashedPass);
         // Set a token for the user in a high level HashMap if valid.
         if (!valid) {
             JsonObject json = new JsonObject();

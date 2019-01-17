@@ -4,7 +4,7 @@ package com.reconsole.reconsole;
 import org.bukkit.plugin.java.JavaPlugin;
 
 // Handler classes.
-import com.reconsole.reconsole.httphandlers.Login;
+import com.reconsole.reconsole.httphandlers.LoginEndpoint;
 import com.reconsole.reconsole.httphandlers.RootEndpoint;
 import com.reconsole.reconsole.httphandlers.CORSWrapperHandler;
 
@@ -27,7 +27,7 @@ public class Main extends JavaPlugin {
         try {
             this.server = HttpServer.create(new InetSocketAddress(4200), 0);
             this.server.setExecutor(null);
-            CORSWrapperHandler login = new CORSWrapperHandler(new Login(this, this.tokens), true);
+            CORSWrapperHandler login = new CORSWrapperHandler(new LoginEndpoint(this, this.tokens), true);
             this.server.createContext("/login", login);
             this.server.createContext("/", new CORSWrapperHandler(new RootEndpoint(this)));
             this.server.start();

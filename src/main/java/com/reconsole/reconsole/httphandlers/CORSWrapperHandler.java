@@ -40,7 +40,7 @@ public class CORSWrapperHandler implements HttpHandler {
             exchange.getResponseHeaders().add("Access-Control-Allow-Max-Age", "86400");
             exchange.getResponseHeaders().add(
                 "Access-Control-Allow-Headers",
-                "Origin, X-Requested-With, Content-Type, Accept, Username, Password"
+                "Origin, X-Requested-With, Content-Type, Accept, Username, Password, Authentication"
             );
             exchange.sendResponseHeaders(200, 0);
             exchange.close();
