@@ -22,4 +22,6 @@ dependencies {
     // testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation 'com.google.code.gson:gson:2.8.5'
     compile 'com.google.guava:guava:27.0.1-jre'
+    // MongoDB database driver.
+    compile 'org.mongodb:mongodb-driver-sync:3.9.1'
 }

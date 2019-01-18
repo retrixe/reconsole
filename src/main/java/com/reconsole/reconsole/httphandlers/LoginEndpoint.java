@@ -9,10 +9,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.gson.JsonObject;
 import com.google.common.hash.Hashing;
 
+import java.security.SecureRandom;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Base64;
 
 public class LoginEndpoint implements HttpHandler {
     private JavaPlugin plugin;
@@ -60,7 +62,11 @@ public class LoginEndpoint implements HttpHandler {
             exchange.close();
             return;
         }
-        String accessToken = "test"; // Help me issue a token pls.
+        // Generate token.
+        // Maybe we shift this to the login strategies?
+        byte[] accessTokenBytes = new byte[96];
+        new SecureRandom().nextBytes(accessTokenBytes);
+        String accessToken = Base64.getEncoder().encodeToString(accessTokenBytes);
         tokens.put(accessToken, exchange.getRequestHeaders().getFirst("Username"));
         // Build the JSON object.
         JsonObject json = new JsonObject();

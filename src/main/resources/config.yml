@@ -1,2 +1,5 @@
-# Configure the login method (default: sqlite, options: sqlite)
+# Configure the login method (default: sqlite)
+# Available options: test (DO NOT USE), mongodb, sqlite, mysql, authme, authme-mysql
+# We recommend using an AuthMe method if you use AuthMe Reloaded, else SQLite.
+# If you have a MongoDB or MySQL/MariaDB database, consider the other methods as well.
 login-method: sqlite
