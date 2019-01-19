@@ -1,6 +1,8 @@
 package com.reconsole.reconsole.httphandlers;
 
 import com.reconsole.reconsole.loginstrategies.TestStrategy;
+import com.reconsole.reconsole.loginstrategies.MongoStrategy;
+import com.reconsole.reconsole.loginstrategies.LoginStrategy;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -47,10 +49,13 @@ public class LoginEndpoint implements HttpHandler {
         // Call the login strategy (read from config about it first).
         // We need to support configuration of either using our own credential system to local file,
         // own credential system to SQL or AuthMe local file support.
-        TestStrategy testStrategy = new TestStrategy(plugin);
+        LoginStrategy loginStrategy = new TestStrategy();
+        String strategy = plugin.getConfig().getString("login-method");
+        if (strategy == "mongodb") loginStrategy = new MongoStrategy(plugin);
+        // Validate via strategy.
         String password = exchange.getRequestHeaders().getFirst("Username");
         String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString(); // Hash the pass.
-        boolean valid = testStrategy.validate(exchange.getRequestHeaders().getFirst("Username"), hashedPass);
+        boolean valid = loginStrategy.validate(exchange.getRequestHeaders().getFirst("Username"), hashedPass);
         // Set a token for the user in a high level HashMap if valid.
         if (!valid) {
             JsonObject json = new JsonObject();
