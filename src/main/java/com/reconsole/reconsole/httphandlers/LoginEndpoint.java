@@ -51,7 +51,7 @@ public class LoginEndpoint implements HttpHandler {
         // own credential system to SQL or AuthMe local file support.
         LoginStrategy loginStrategy = new TestStrategy();
         String strategy = plugin.getConfig().getString("login-method");
-        if (strategy == "mongodb") loginStrategy = new MongoStrategy(plugin);
+        if (strategy.equals("mongodb")) loginStrategy = new MongoStrategy(plugin);
         // Validate via strategy.
         String password = exchange.getRequestHeaders().getFirst("Username");
         String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString(); // Hash the pass.
