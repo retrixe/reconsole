@@ -36,4 +36,9 @@ public class Main extends JavaPlugin {
             this.getLogger().log(Level.SEVERE, "HTTP server failed to listen on port 4200!", e);
         }
     }
+
+    @Override
+    public void onDisable() {
+        this.server.stop(0);
+    }
 }

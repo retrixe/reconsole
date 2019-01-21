@@ -21,7 +21,15 @@ import java.util.Base64;
 public class LoginEndpoint implements HttpHandler {
     private JavaPlugin plugin;
     private HashMap<String, String> tokens;
-    public LoginEndpoint(JavaPlugin javaPlugin, HashMap<String, String> tokenMap) { plugin = javaPlugin; tokens = tokenMap; }
+    private LoginStrategy loginStrategy;
+    public LoginEndpoint(JavaPlugin javaPlugin, HashMap<String, String> tokenMap) {
+        plugin = javaPlugin;
+        tokens = tokenMap;
+        // Determine the type of strategy to use.
+        loginStrategy = new TestStrategy();
+        String strategy = plugin.getConfig().getString("login-method");
+        if (strategy.equals("mongodb")) loginStrategy = new MongoStrategy(plugin);
+    }
 
     public void handle(HttpExchange exchange) throws IOException {
         // Validate if credentials were sent, if invalid error.
@@ -49,10 +57,6 @@ public class LoginEndpoint implements HttpHandler {
         // Call the login strategy (read from config about it first).
         // We need to support configuration of either using our own credential system to local file,
         // own credential system to SQL or AuthMe local file support.
-        LoginStrategy loginStrategy = new TestStrategy();
-        String strategy = plugin.getConfig().getString("login-method");
-        if (strategy.equals("mongodb")) loginStrategy = new MongoStrategy(plugin);
-        // Validate via strategy.
         String password = exchange.getRequestHeaders().getFirst("Username");
         String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString(); // Hash the pass.
         boolean valid = loginStrategy.validate(exchange.getRequestHeaders().getFirst("Username"), hashedPass);
