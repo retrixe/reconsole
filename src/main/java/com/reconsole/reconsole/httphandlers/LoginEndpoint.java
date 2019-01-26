@@ -1,34 +1,19 @@
 package com.reconsole.reconsole.httphandlers;
 
-import com.reconsole.reconsole.loginstrategies.TestStrategy;
-import com.reconsole.reconsole.loginstrategies.MongoStrategy;
-import com.reconsole.reconsole.loginstrategies.LoginStrategy;
+import com.reconsole.reconsole.AuthenticationHandler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import org.bukkit.plugin.java.JavaPlugin;
 import com.google.gson.JsonObject;
-import com.google.common.hash.Hashing;
 
-import java.security.SecureRandom;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Base64;
 
 public class LoginEndpoint implements HttpHandler {
-    private JavaPlugin plugin;
-    private HashMap<String, String> tokens;
-    private LoginStrategy loginStrategy;
-    public LoginEndpoint(JavaPlugin javaPlugin, HashMap<String, String> tokenMap) {
-        plugin = javaPlugin;
-        tokens = tokenMap;
-        // Determine the type of strategy to use.
-        loginStrategy = new TestStrategy();
-        String strategy = plugin.getConfig().getString("login-method");
-        if (strategy.equals("mongodb")) loginStrategy = new MongoStrategy(plugin);
+    private AuthenticationHandler authHandler;
+    public LoginEndpoint(AuthenticationHandler auth) {
+        authHandler = auth;
     }
 
     public void handle(HttpExchange exchange) throws IOException {
@@ -54,14 +39,11 @@ public class LoginEndpoint implements HttpHandler {
             exchange.close();
             return;
         }
-        // Call the login strategy (read from config about it first).
-        // We need to support configuration of either using our own credential system to local file,
-        // own credential system to SQL or AuthMe local file support.
+        // Call the authentication handler and get a token back.
         String password = exchange.getRequestHeaders().getFirst("Username");
-        String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString(); // Hash the pass.
-        boolean valid = loginStrategy.validate(exchange.getRequestHeaders().getFirst("Username"), hashedPass);
-        // Set a token for the user in a high level HashMap if valid.
-        if (!valid) {
+        String token = authHandler.authenticate(exchange.getRequestHeaders().getFirst("Username"), password);
+        // Send an access denied error if authentication is invalid.
+        if (token == null) {
             JsonObject json = new JsonObject();
             json.addProperty("code", 401);
             json.addProperty("success", false);
@@ -71,18 +53,12 @@ public class LoginEndpoint implements HttpHandler {
             exchange.close();
             return;
         }
-        // Generate token.
-        // Maybe we shift this to the login strategies?
-        byte[] accessTokenBytes = new byte[96];
-        new SecureRandom().nextBytes(accessTokenBytes);
-        String accessToken = Base64.getEncoder().encodeToString(accessTokenBytes);
-        tokens.put(accessToken, exchange.getRequestHeaders().getFirst("Username"));
         // Build the JSON object.
         JsonObject json = new JsonObject();
         json.addProperty("code", 200);
         json.addProperty("success", true);
         json.addProperty("status", "authenticated");
-        json.addProperty("access_token", accessToken);
+        json.addProperty("access_token", token);
         String res = json.toString();
         // Sending the response.
         exchange.sendResponseHeaders(200, res.length());

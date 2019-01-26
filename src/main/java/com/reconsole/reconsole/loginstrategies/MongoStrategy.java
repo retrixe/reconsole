@@ -23,7 +23,7 @@ public class MongoStrategy implements LoginStrategy {
         database = mongoClient.getDatabase("reconsole");
     }
 
-    public boolean validate (String username, String hashedPass) {
+    public boolean authenticate (String username, String hashedPass) {
         MongoCollection<Document> users = database.getCollection("users");
         FindIterable<Document> user = users.find(
                 Filters.and(Filters.eq("username", username), Filters.eq("password", hashedPass))
