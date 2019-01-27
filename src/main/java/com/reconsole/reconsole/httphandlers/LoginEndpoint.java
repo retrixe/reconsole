@@ -40,7 +40,7 @@ public class LoginEndpoint implements HttpHandler {
             return;
         }
         // Call the authentication handler and get a token back.
-        String password = exchange.getRequestHeaders().getFirst("Username");
+        String password = exchange.getRequestHeaders().getFirst("Password");
         String token = authHandler.authenticate(exchange.getRequestHeaders().getFirst("Username"), password);
         // Send an access denied error if authentication is invalid.
         if (token == null) {

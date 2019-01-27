@@ -1,6 +1,7 @@
 package com.reconsole.reconsole;
 
 // Plugin related imports.
+import com.reconsole.reconsole.httphandlers.PerformanceMetricsEndpoint;
 import org.bukkit.plugin.java.JavaPlugin;
 
 // Handler classes.
@@ -10,6 +11,7 @@ import com.reconsole.reconsole.httphandlers.CORSWrapperHandler;
 
 // HTTP server related imports.
 import com.sun.net.httpserver.HttpServer;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.logging.Level;
@@ -29,11 +31,13 @@ public class Main extends JavaPlugin {
         try {
             this.server = HttpServer.create(new InetSocketAddress(4200), 0);
             this.server.setExecutor(null);
-            // Initialize our login endpoint.
-            CORSWrapperHandler login = new CORSWrapperHandler(new LoginEndpoint(authHandler), true);
+            // Initialize our login and performance metrics endpoint.
+            CORSWrapperHandler loginEndpoint = new CORSWrapperHandler(new LoginEndpoint(authHandler), true);
+            PerformanceMetricsEndpoint metricsEndpoint = new PerformanceMetricsEndpoint(this, authHandler);
             // Register endpoint handlers.
             this.server.createContext("/", new CORSWrapperHandler(new RootEndpoint(this)));
-            this.server.createContext("/login", login);
+            this.server.createContext("/performanceMetrics", new CORSWrapperHandler(metricsEndpoint));
+            this.server.createContext("/login", loginEndpoint);
             // Start the server and log if successful.
             this.server.start();
             this.getLogger().log(Level.INFO, "HTTP server successfully listening on port 4200.");
