@@ -37,7 +37,7 @@ public class Main extends JavaPlugin {
             StatisticsEndpoint metricsEndpoint = new StatisticsEndpoint(this, authHandler, time);
             // Register endpoint handlers.
             this.server.createContext("/", new CORSWrapperHandler(new RootEndpoint(this)));
-            this.server.createContext("/statistics", new CORSWrapperHandler(metricsEndpoint));
+            this.server.createContext("/statistics", new CORSWrapperHandler(metricsEndpoint, true));
             this.server.createContext("/login", loginEndpoint);
             // Start the server and log if successful.
             this.server.start();
