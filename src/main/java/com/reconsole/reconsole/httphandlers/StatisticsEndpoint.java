@@ -60,7 +60,7 @@ public class StatisticsEndpoint implements HttpHandler {
         json.addProperty("online", true);
         json.addProperty("memoryUsed", ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed());
         json.addProperty("totalMemory", o.getTotalPhysicalMemorySize());
-        json.addProperty("cpuUsage", (int)o.getProcessCpuLoad() * 100);
+        json.addProperty("cpuUsage", (int)(o.getProcessCpuLoad() * 100));
         json.addProperty("onlineSince", startTime);
         // Copied from root endpoint.
         json.addProperty("maxPlayers", plugin.getServer().getMaxPlayers());
