@@ -15,12 +15,14 @@ import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import com.sun.management.OperatingSystemMXBean;
 
-public class PerformanceMetricsEndpoint implements HttpHandler {
+public class StatisticsEndpoint implements HttpHandler {
     private JavaPlugin plugin;
+    private long startTime;
     private AuthenticationHandler authenticationHandler;
-    public PerformanceMetricsEndpoint(JavaPlugin javaPlugin, AuthenticationHandler auth) {
+    public StatisticsEndpoint(JavaPlugin javaPlugin, AuthenticationHandler auth, long time) {
         plugin = javaPlugin;
         authenticationHandler = auth;
+        startTime = time;
     }
 
     public void handle(HttpExchange exchange) throws IOException {
@@ -59,6 +61,11 @@ public class PerformanceMetricsEndpoint implements HttpHandler {
         json.addProperty("memoryUsed", ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed());
         json.addProperty("totalMemory", o.getTotalPhysicalMemorySize());
         json.addProperty("cpuUsage", (int)o.getProcessCpuLoad() * 100);
+        json.addProperty("onlineSince", startTime);
+        // Copied from root endpoint.
+        json.addProperty("maxPlayers", plugin.getServer().getMaxPlayers());
+        json.addProperty("playersOnline", plugin.getServer().getOnlinePlayers().size());
+        json.addProperty("versionName", plugin.getServer().getVersion());
         // json.addProperty("tps", 20.00);
         String res = json.toString();
         // Sending the response.

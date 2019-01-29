@@ -1,7 +1,7 @@
 package com.reconsole.reconsole;
 
 // Plugin related imports.
-import com.reconsole.reconsole.httphandlers.PerformanceMetricsEndpoint;
+import com.reconsole.reconsole.httphandlers.StatisticsEndpoint;
 import org.bukkit.plugin.java.JavaPlugin;
 
 // Handler classes.
@@ -21,6 +21,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable () {
+        long time = System.currentTimeMillis();
         // Setup authentication.
         AuthenticationHandler authHandler = new AuthenticationHandler(this);
 
@@ -33,10 +34,10 @@ public class Main extends JavaPlugin {
             this.server.setExecutor(null);
             // Initialize our login and performance metrics endpoint.
             CORSWrapperHandler loginEndpoint = new CORSWrapperHandler(new LoginEndpoint(authHandler), true);
-            PerformanceMetricsEndpoint metricsEndpoint = new PerformanceMetricsEndpoint(this, authHandler);
+            StatisticsEndpoint metricsEndpoint = new StatisticsEndpoint(this, authHandler, time);
             // Register endpoint handlers.
             this.server.createContext("/", new CORSWrapperHandler(new RootEndpoint(this)));
-            this.server.createContext("/performanceMetrics", new CORSWrapperHandler(metricsEndpoint));
+            this.server.createContext("/statistics", new CORSWrapperHandler(metricsEndpoint));
             this.server.createContext("/login", loginEndpoint);
             // Start the server and log if successful.
             this.server.start();
