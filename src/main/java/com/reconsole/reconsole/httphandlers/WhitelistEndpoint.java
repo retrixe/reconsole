@@ -63,34 +63,66 @@ public class WhitelistEndpoint implements HttpHandler {
                 return;
             }
             case "/whitelist/addPlayerByName": {
-                String query = exchange.getRequestURI().getQuery();
-                plugin.getServer().getPlayer(query.split("=")[1]).setWhitelisted(true);
-                // Build the JSON object.
-                JsonObject json = new JsonObject();
-                json.addProperty("code", 200);
-                json.addProperty("success", true);
-                String res = json.toString();
-                // Sending the response.
-                exchange.sendResponseHeaders(200, res.length());
-                OutputStream outputStream = exchange.getResponseBody();
-                outputStream.write(res.getBytes());
-                outputStream.close();
-                return;
+                try {
+                    String query = exchange.getRequestURI().getQuery();
+                    if (plugin.getServer().getPlayer(query.split("=")[1]) == null) throw new Error();
+                    plugin.getServer().getPlayer(query.split("=")[1]).setWhitelisted(true);
+                    // Build the JSON object.
+                    JsonObject json = new JsonObject();
+                    json.addProperty("code", 200);
+                    json.addProperty("success", true);
+                    String res = json.toString();
+                    // Sending the response.
+                    exchange.sendResponseHeaders(200, res.length());
+                    OutputStream outputStream = exchange.getResponseBody();
+                    outputStream.write(res.getBytes());
+                    outputStream.close();
+                    return;
+                } catch (Error e) {
+                    // Build the JSON object.
+                    JsonObject json = new JsonObject();
+                    json.addProperty("code", 404);
+                    json.addProperty("success", false);
+                    json.addProperty("status", "invalid_name");
+                    String res = json.toString();
+                    // Sending the response.
+                    exchange.sendResponseHeaders(404, res.length());
+                    OutputStream outputStream = exchange.getResponseBody();
+                    outputStream.write(res.getBytes());
+                    outputStream.close();
+                    return;
+                }
             }
             case "/whitelist/removePlayerByUUID": {
-                String query = exchange.getRequestURI().getQuery();
-                plugin.getServer().getPlayer(UUID.fromString(query.split("=")[1])).setWhitelisted(false);
-                // Build the JSON object.
-                JsonObject json = new JsonObject();
-                json.addProperty("code", 200);
-                json.addProperty("success", true);
-                String res = json.toString();
-                // Sending the response.
-                exchange.sendResponseHeaders(200, res.length());
-                OutputStream outputStream = exchange.getResponseBody();
-                outputStream.write(res.getBytes());
-                outputStream.close();
-                return;
+                try {
+                    String query = exchange.getRequestURI().getQuery();
+                    if (plugin.getServer().getPlayer(UUID.fromString(query.split("=")[1])) == null) throw new Error();
+                    plugin.getServer().getPlayer(UUID.fromString(query.split("=")[1])).setWhitelisted(false);
+                    // Build the JSON object.
+                    JsonObject json = new JsonObject();
+                    json.addProperty("code", 200);
+                    json.addProperty("success", true);
+                    String res = json.toString();
+                    // Sending the response.
+                    exchange.sendResponseHeaders(200, res.length());
+                    OutputStream outputStream = exchange.getResponseBody();
+                    outputStream.write(res.getBytes());
+                    outputStream.close();
+                    return;
+                } catch (Error e) {
+                    // Build the JSON object.
+                    JsonObject json = new JsonObject();
+                    json.addProperty("code", 404);
+                    json.addProperty("success", false);
+                    json.addProperty("status", "invalid_uuid");
+                    String res = json.toString();
+                    // Sending the response.
+                    exchange.sendResponseHeaders(404, res.length());
+                    OutputStream outputStream = exchange.getResponseBody();
+                    outputStream.write(res.getBytes());
+                    outputStream.close();
+                    return;
+                }
             }
         }
         // Get an array of whitelisted players.
