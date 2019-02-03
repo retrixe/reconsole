@@ -64,9 +64,22 @@ public class WhitelistEndpoint implements HttpHandler {
             }
             case "/whitelist/addPlayerByName": {
                 try {
-                    String query = exchange.getRequestURI().getQuery();
-                    if (plugin.getServer().getPlayer(query.split("=")[1]) == null) throw new Error();
-                    plugin.getServer().getPlayer(query.split("=")[1]).setWhitelisted(true);
+                    String query = exchange.getRequestURI().getQuery().split("=")[1];
+                    // Try with the API first.
+                    OfflinePlayer player = plugin.getServer().getPlayer(query);
+                    if (player != null) player.setWhitelisted(true);
+                    // We will execute a command for this.
+                    else {
+                        String cmd = "whitelist add " + query;
+                        boolean success = true;
+                        if (!plugin.getServer().isPrimaryThread()) {
+                            plugin.getServer().getScheduler().runTask(
+                                plugin,
+                                () -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd)
+                            );
+                        } else success = plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd);
+                        if (!success) throw new Exception();
+                    }
                     // Build the JSON object.
                     JsonObject json = new JsonObject();
                     json.addProperty("code", 200);
@@ -78,7 +91,7 @@ public class WhitelistEndpoint implements HttpHandler {
                     outputStream.write(res.getBytes());
                     outputStream.close();
                     return;
-                } catch (Error e) {
+                } catch (Throwable e) {
                     // Build the JSON object.
                     JsonObject json = new JsonObject();
                     json.addProperty("code", 404);
@@ -95,9 +108,16 @@ public class WhitelistEndpoint implements HttpHandler {
             }
             case "/whitelist/removePlayerByUUID": {
                 try {
-                    String query = exchange.getRequestURI().getQuery();
-                    if (plugin.getServer().getPlayer(UUID.fromString(query.split("=")[1])) == null) throw new Error();
-                    plugin.getServer().getPlayer(UUID.fromString(query.split("=")[1])).setWhitelisted(false);
+                    String query = exchange.getRequestURI().getQuery().split("=")[1];
+                    boolean success = false;
+                    // Use the Bukkit API for this.
+                    for (OfflinePlayer i : plugin.getServer().getWhitelistedPlayers()) {
+                        if (i.getUniqueId().equals(UUID.fromString(query))) {
+                            i.setWhitelisted(false);
+                            success = true;
+                        }
+                    }
+                    if (!success) throw new Exception();
                     // Build the JSON object.
                     JsonObject json = new JsonObject();
                     json.addProperty("code", 200);
@@ -109,7 +129,7 @@ public class WhitelistEndpoint implements HttpHandler {
                     outputStream.write(res.getBytes());
                     outputStream.close();
                     return;
-                } catch (Error e) {
+                } catch (Exception e) {
                     // Build the JSON object.
                     JsonObject json = new JsonObject();
                     json.addProperty("code", 404);
