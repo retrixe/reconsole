@@ -11,6 +11,7 @@ import com.reconsole.reconsole.httphandlers.CORSWrapperHandler;
 import com.reconsole.reconsole.httphandlers.LoginValidationEndpoint;
 import com.reconsole.reconsole.httphandlers.WhitelistEndpoint;
 import com.reconsole.reconsole.httphandlers.OperatorEndpoint;
+import com.reconsole.reconsole.httphandlers.ServerPropertiesEndpoint;
 
 // HTTP server related imports.
 import com.sun.net.httpserver.HttpServer;
@@ -41,6 +42,7 @@ public class Main extends JavaPlugin {
             StatisticsEndpoint metricsEndpoint = new StatisticsEndpoint(this, authHandler, time);
             WhitelistEndpoint whitelistEndpoint = new WhitelistEndpoint(this, authHandler);
             OperatorEndpoint operatorEndpoint = new OperatorEndpoint(this, authHandler);
+            ServerPropertiesEndpoint serverPrEndpoint = new ServerPropertiesEndpoint(authHandler);
             // Register endpoint handlers.
             this.server.createContext("/", new CORSWrapperHandler(new RootEndpoint(this)));
             this.server.createContext("/statistics", new CORSWrapperHandler(metricsEndpoint, true));
@@ -48,6 +50,7 @@ public class Main extends JavaPlugin {
             this.server.createContext("/login/validate", new CORSWrapperHandler(validationEndpoint, true));
             this.server.createContext("/whitelist", new CORSWrapperHandler(whitelistEndpoint, true));
             this.server.createContext("/operators", new CORSWrapperHandler(operatorEndpoint, true));
+            this.server.createContext("/serverProperties", new CORSWrapperHandler(serverPrEndpoint, true));
             // Start the server and log if successful.
             this.server.start();
             this.getLogger().log(Level.INFO, "HTTP server successfully listening on port 4200.");
