@@ -12,6 +12,7 @@ import com.reconsole.reconsole.httphandlers.LoginValidationEndpoint;
 import com.reconsole.reconsole.httphandlers.WhitelistEndpoint;
 import com.reconsole.reconsole.httphandlers.OperatorEndpoint;
 import com.reconsole.reconsole.httphandlers.ServerPropertiesEndpoint;
+import com.reconsole.reconsole.console.ConsoleListener;
 
 // HTTP server related imports.
 import com.sun.net.httpserver.HttpServer;
@@ -31,6 +32,10 @@ public class Main extends JavaPlugin {
 
         // Setup default configuration.
         // this.saveDefaultConfig();
+
+        // Setup listeners.
+        ConsoleListener consoleListener = new ConsoleListener();
+        this.getServer().getPluginManager().registerEvents(consoleListener, this);
 
         // Start HTTP server.
         try {
