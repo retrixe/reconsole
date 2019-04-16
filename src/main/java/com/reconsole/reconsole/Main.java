@@ -1,7 +1,6 @@
 package com.reconsole.reconsole;
 
 // Plugin related imports.
-import com.reconsole.reconsole.httphandlers.StatisticsEndpoint;
 import org.bukkit.plugin.java.JavaPlugin;
 
 // Handler classes.
@@ -9,10 +8,10 @@ import com.reconsole.reconsole.httphandlers.LoginEndpoint;
 import com.reconsole.reconsole.httphandlers.RootEndpoint;
 import com.reconsole.reconsole.httphandlers.CORSWrapperHandler;
 import com.reconsole.reconsole.httphandlers.LoginValidationEndpoint;
+import com.reconsole.reconsole.httphandlers.StatisticsEndpoint;
 import com.reconsole.reconsole.httphandlers.WhitelistEndpoint;
 import com.reconsole.reconsole.httphandlers.OperatorEndpoint;
 import com.reconsole.reconsole.httphandlers.ServerPropertiesEndpoint;
-import com.reconsole.reconsole.console.ConsoleListener;
 
 // HTTP server related imports.
 import com.sun.net.httpserver.HttpServer;
