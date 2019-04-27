@@ -1,5 +1,5 @@
 name: "ReConsole"
-version: "1.0.0-alpha.0"
+version: "1.0.0-alpha.1"
 description: "A plugin to manage your Minecraft server together with a frontend."
 authors: ["Ibrahim Ansari <ansari.ibrahim1@gmail.com>", "Banica Mihai"]
 main: "com.reconsole.reconsole.Main"

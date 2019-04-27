@@ -9,16 +9,19 @@ import com.sun.net.httpserver.HttpHandler;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 
-public class ConsoleExecuteEndpoint implements HttpHandler {
+public class ConsoleEndpoint implements HttpHandler {
     private AuthenticationHandler authenticationHandler;
     private JavaPlugin plugin;
-    public ConsoleExecuteEndpoint(JavaPlugin javaPlugin, AuthenticationHandler auth) {
+    public ConsoleEndpoint(JavaPlugin javaPlugin, AuthenticationHandler auth) {
         authenticationHandler = auth;
         plugin = javaPlugin;
     }
@@ -43,27 +46,32 @@ public class ConsoleExecuteEndpoint implements HttpHandler {
             exchange.close();
             return;
         }
-        // Read the body.
-        InputStreamReader isr =  new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8);
-        BufferedReader br = new BufferedReader(isr);
-        int b;
-        StringBuilder buf = new StringBuilder();
-        while ((b = br.read()) != -1) buf.append((char) b);
-        br.close();
-        isr.close();
-        // Execute the command.
-        boolean success = this.plugin.getServer().dispatchCommand(
-            this.plugin.getServer().getConsoleSender(), buf.toString()
-        );
-        // Build the JSON object.
-        JsonObject json = new JsonObject();
-        json.addProperty("code", 200);
-        json.addProperty("success", success);
-        String res = json.toString();
-        // Sending the response.
-        exchange.sendResponseHeaders(200, res.length());
-        OutputStream outputStream = exchange.getResponseBody();
-        outputStream.write(res.getBytes());
-        outputStream.close();
+        // Depending on the path we will perform an operation.
+        String path = exchange.getRequestURI().getPath();
+        // If we need to execute a command.
+        if (path.equals("/console/execute")) {
+            // Read the body.
+            InputStreamReader isr =  new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8);
+            BufferedReader br = new BufferedReader(isr);
+            int b;
+            StringBuilder buf = new StringBuilder();
+            while ((b = br.read()) != -1) buf.append((char) b);
+            br.close();
+            isr.close();
+            // Execute the command.
+            boolean success = this.plugin.getServer().dispatchCommand(
+                    this.plugin.getServer().getConsoleSender(), buf.toString()
+            );
+            // Build the JSON object.
+            JsonObject json = new JsonObject();
+            json.addProperty("code", 200);
+            json.addProperty("success", success);
+            String res = json.toString();
+            // Sending the response.
+            exchange.sendResponseHeaders(200, res.length());
+            OutputStream outputStream = exchange.getResponseBody();
+            outputStream.write(res.getBytes());
+            outputStream.close();
+        }
     }
 }

@@ -25,7 +25,7 @@ const reconsoleExists = fs.existsSync(pathToLogs)
 if (!reconsoleExists) fs.mkdirSync(pathToLogs)
 
 // The file.
-let file = fs.readFileSync(pathToLogs)
+let file = fs.readFileSync(pathToLogs, { encoding: 'utf8' }).split('\n')
 
 // Watch logs/latest.log
 const watcher = chokidar.watch(pathToLogs)
@@ -33,16 +33,22 @@ watcher.on('ready', () => console.log(`[ReConsole WS Gateway] Watching ${pathToL
 
 // When the file changes, we broadcast the change.
 watcher.on('change', async () => {
-  // We simply inform the new number of lines in the file. Everything else is handled by client/plugin.
-  console.log('File changed.')
-  file = fs.readFileSync(pathToLogs, { encoding: 'utf8' })
-  console.log('File read.')
-  wss.broadcast(file.split('\n').length)
+  // We read the file by line.
+  const prev = file.length
+  file = fs.readFileSync(pathToLogs, { encoding: 'utf8' }).split('\n')
+  // Calculate the new lines.
+  const diff = []
+  for (let a = 1; a <= (file.length - prev); a++) {
+    diff.unshift(file[file.length - a])
+  }
+  wss.broadcast(diff.join('\n'))
 })
 
 // Register events on the WebSocket server.
 wss.on('listening', () => console.log('[ReConsole WS Gateway] Listening on port 4269.'))
 wss.on('connection', (ws) => {
+  // We send the entire file.
+  ws.send(file.join('\n'))
   // We probably shouldn't be getting messages. This is to be handled by the plugin.
   ws.on('message', (message) => console.log(`[ReConsole WS Gateway] Received: ${inspect(message)}`))
 })
@@ -54,5 +60,4 @@ const exitHandler = () => {
   console.log('\n[ReConsole WS Gateway] Shutting down file listener.')
   process.exit()
 }
-process.on('exit', exitHandler)
 process.on('SIGINT', exitHandler)
