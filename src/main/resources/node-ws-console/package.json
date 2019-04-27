@@ -1,0 +1,15 @@
+{
+  "name": "node-ws-console",
+  "version": "1.0.0-alpha.1",
+  "description": "The WebSocket API for ReConsole, written with Node.js instead of Java.",
+  "main": "index.js",
+  "repository": "https://github.com/retrixe/ReConsole",
+  "author": "Ibrahim Ansari <ansari.ibrahim1@gmail.com>",
+  "license": "GPL-3.0",
+  "private": true,
+  "dependencies": {
+    "chokidar": "^2.1.5",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v15.9.0",
+    "ws": "^6.2.1"
+  }
+}

@@ -18,17 +18,49 @@ import com.reconsole.reconsole.httphandlers.ServerPropertiesEndpoint;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.net.InetSocketAddress;
 import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
     private HttpServer server;
 
+    private void saveFile (String file) throws Exception {
+        File configFile = new File(this.getDataFolder(), file);
+        if (!configFile.exists()) {
+            InputStream fis = Main.class.getClassLoader().getResourceAsStream(file);
+            if (fis == null) throw new Exception("This JAR is corrupted, no WebSocket impl. found!");
+            Files.copy(fis, configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
     @Override
     public void onEnable () {
         long time = System.currentTimeMillis();
         // Setup authentication.
         AuthenticationHandler authHandler = new AuthenticationHandler(this);
+
+        // Start the Node.js WebSocket gateway.
+        try {
+            if (!new File(this.getDataFolder(), "node-ws-console").isDirectory()) {
+                boolean success = new File(this.getDataFolder(), "node-ws-console").mkdirs();
+                if (!success) throw new Exception();
+            }
+            this.saveFile("node-ws-console/index.js");
+            this.saveFile("node-ws-console/package.json");
+            this.saveFile("node-ws-console/yarn.lock");
+            // Execute the WebSocket implementation.
+            String node = System.getProperty("os.name").equalsIgnoreCase("win")
+                ? this.getConfig().getConfigurationSection("nodejs").getString("windows")
+                : this.getConfig().getConfigurationSection("nodejs").getString("linux");
+            Process ws = Runtime.getRuntime().exec(node + " " + this.getDataFolder() + "/node-ws-console/index.js");
+            if (!ws.isAlive()) this.getLogger().log(Level.SEVERE, "WebSocket server failed to start up!");
+        } catch (Exception e) {
+            this.getLogger().log(Level.SEVERE, "Initializing the WebSocket failed due to an unknown error!", e);
+        }
 
         // Setup default configuration.
         // this.saveDefaultConfig();

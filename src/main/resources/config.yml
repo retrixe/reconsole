@@ -8,3 +8,10 @@ login-method: sqlite
 mongodb:
   # Connection URL
   connection-url: ""
+
+# Path to Node.js.
+nodejs:
+  # Location of Node.js on Linux (it is assumed it is in PATH, modify if needed) (also used for macOS, modify)
+  linux: "/usr/bin/env node"
+  # Location of Node.js on Windows (it is assumed it is in PATH, modify if needed)
+  windows: "nodejs.exe"
