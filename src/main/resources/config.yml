@@ -9,6 +9,24 @@ mongodb:
   # Connection URL
   connection-url: ""
 
+# SQLite configuration (ONLY NEEDED WHEN USING SQLite LOGIN METHOD)
+sqlite:
+  # Connection URL
+  connection-url: ""
+  # Username
+  username: ""
+  # Password
+  password: ""
+
+# MySQL configuration (ONLY NEEDED WHEN USING MySQL LOGIN METHOD)
+mysql:
+  # Connection URL
+  connection-url: ""
+  # Username
+  username: ""
+  # Password
+  password: ""
+
 # Path to Node.js.
 nodejs:
   # Location of Node.js on Linux (it is assumed it is in PATH, modify if needed) (also used for macOS, modify)
