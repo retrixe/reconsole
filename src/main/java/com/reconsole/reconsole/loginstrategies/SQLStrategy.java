@@ -9,10 +9,10 @@ public class SQLStrategy implements LoginStrategy {
 
     private Connection connection;
 
-    public SQLStrategy(JavaPlugin javaPlugin, String dbName) throws SQLException {
+    SQLStrategy(JavaPlugin javaPlugin, String dbName) throws SQLException {
         ConfigurationSection section = javaPlugin.getConfig().getConfigurationSection(dbName);
         connection = DriverManager.getConnection(
-                section.getString("connection-url"),
+                section.getString("connection-url").replace("{df}", javaPlugin.getDataFolder().getPath()),
                 section.getString("username"),
                 section.getString("password"));
     }

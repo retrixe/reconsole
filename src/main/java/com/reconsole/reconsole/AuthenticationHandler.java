@@ -1,8 +1,6 @@
 package com.reconsole.reconsole;
 
-import com.reconsole.reconsole.loginstrategies.TestStrategy;
-import com.reconsole.reconsole.loginstrategies.MongoStrategy;
-import com.reconsole.reconsole.loginstrategies.LoginStrategy;
+import com.reconsole.reconsole.loginstrategies.*;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import com.google.common.hash.Hashing;
 
@@ -28,7 +27,25 @@ public class AuthenticationHandler {
         String strategy = javaPlugin.getConfig().getString("login-method");
 
         // Available strategies when complete: mongodb, sqlite, mysql, authme, authme-mysql
-        if (strategy.equals("mongodb")) loginStrategy = new MongoStrategy(javaPlugin);
+        switch (strategy) {
+            case "mongodb":
+                loginStrategy = new MongoStrategy(javaPlugin);
+                break;
+            case "sqlite":
+                try {
+                    loginStrategy = new SQLiteStrategy(javaPlugin);
+                } catch (Exception e) {
+                    javaPlugin.getLogger().log(Level.SEVERE, "Failed to connect to SQLite!");
+                }
+                break;
+            case "mysql":
+                try {
+                    loginStrategy = new MySQLStrategy(javaPlugin);
+                } catch (Exception e) {
+                    javaPlugin.getLogger().log(Level.SEVERE, "Failed to connect to MySQL!");
+                }
+                break;
+        }
     }
 
     public String authenticate (String username, String password) {
