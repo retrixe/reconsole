@@ -76,16 +76,23 @@ public class Main extends JavaPlugin {
 
         // Start the Node.js WebSocket gateway.
         try {
+            // Check if node-ws-console folder exists, and save its contents to disk.
             if (!new File(this.getDataFolder(), "node-ws-console").isDirectory()) {
                 boolean success = new File(this.getDataFolder(), "node-ws-console").mkdirs();
                 if (!success) throw new Exception();
             }
-            this.saveFile("node-ws-console/build/index.js");
-            // Execute the WebSocket implementation.
-            String node = System.getProperty("os.name").equalsIgnoreCase("win")
-                ? this.getConfig().getConfigurationSection("nodejs").getString("windows")
-                : this.getConfig().getConfigurationSection("nodejs").getString("linux");
-            this.ws = Runtime.getRuntime().exec(node + " " + this.getDataFolder() + "/node-ws-console/build/index.js");
+            this.saveFile("node-ws-console/index.js");
+            this.saveFile("node-ws-console/package.json");
+            this.saveFile("node-ws-console/yarn.lock");
+            // Figure out platform differences and what not.
+            String platform = System.getProperty("os.name").equalsIgnoreCase("win") ? "windows" : "linux";
+            String node = this.getConfig().getConfigurationSection("nodejs").getBoolean("use-fallback-node")
+                ? this.getConfig().getConfigurationSection("nodejs").getString(platform + "-fallback")
+                    .replace("{df}", this.getDataFolder().getAbsolutePath())
+                : this.getConfig().getConfigurationSection("nodejs").getString(platform);
+
+            // Execute the WebSocket server, wait 2 seconds and then log whether it succeeded or failed.
+            this.ws = Runtime.getRuntime().exec(node + " " + this.getDataFolder() + "/node-ws-console/index.js");
             TimeUnit.SECONDS.sleep(2); // Wait 2 seconds before the announcement.
             if (!ws.isAlive()) this.getLogger().log(Level.SEVERE, "WebSocket server failed to listen on port 4269!");
             else this.getLogger().log(Level.INFO, "WebSocket server successfully listening on port 4269!");

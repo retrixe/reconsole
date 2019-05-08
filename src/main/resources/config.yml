@@ -29,7 +29,14 @@ mysql:
 
 # Path to Node.js.
 nodejs:
-  # Location of Node.js on Linux (it is assumed it is in PATH, modify if needed) (also used for macOS, modify)
+  # Location of Node.js on Linux (it is assumed it is in PATH, modify if needed)
+  # NOTE: This is also used for macOS, it should work with both fallback and without.
   linux: "/usr/bin/env node"
+  linux-fallback: "{df}/node"
+
   # Location of Node.js on Windows (it is assumed it is in PATH, modify if needed)
   windows: "nodejs.exe"
+  windows-fallback: "{df}\\node.exe"
+
+  # Use fallback Node.js i.e. an executable in the data folder. This is for MC hosts where Node can't be installed.
+  use-fallback-node: false
