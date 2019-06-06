@@ -7,6 +7,15 @@ api-version: 1.12.2
 
 # Setting up commands here.
 commands:
+  reconsole:
+    description: "Used to manage the ReConsole server."
+    usage: "/reconsole (register/changepw) <username> <password> <confirmPass> or /reconsole delete <username>"
+    permission: ReConsole.use
+    permission-message: "§4You do not have adequate permission to use this command!"
 
 # Setting up permissions here.
 permissions:
+  ReConsole.use:
+    description: "Allows using the ReConsole dashboard and command."
+    default: op
+

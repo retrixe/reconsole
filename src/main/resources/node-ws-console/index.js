@@ -38,8 +38,8 @@ watcher.on('change', async () => {
   file = fs.readFileSync(pathToLogs, { encoding: 'utf8' }).split('\n')
   // Calculate the new lines.
   const diff = []
-  for (let a = 1; a <= (file.length - prev); a++) {
-    diff.unshift(file[file.length - a])
+  for (let a = (prev - 1); a < file.length; a++) {
+    diff.unshift(file[a])
   }
   wss.broadcast(diff.join('\n'))
 })
