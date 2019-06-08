@@ -46,6 +46,9 @@ public class Main extends JavaPlugin {
         // Setup default configuration.
         // this.saveDefaultConfig();
 
+        // Register command.
+        this.getCommand("reconsole").setExecutor(new ReconsoleCommand(this, authHandler));
+
         // Start HTTP server.
         try {
             this.server = HttpServer.create(new InetSocketAddress(4200), 0);

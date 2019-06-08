@@ -39,7 +39,7 @@ watcher.on('change', async () => {
   // Calculate the new lines.
   const diff = []
   for (let a = (prev - 1); a < file.length; a++) {
-    diff.unshift(file[a])
+    diff.push(file[a])
   }
   wss.broadcast(diff.join('\n'))
 })

@@ -35,14 +35,14 @@ public class AuthenticationHandler {
                 try {
                     loginStrategy = new SQLiteStrategy(javaPlugin);
                 } catch (Exception e) {
-                    javaPlugin.getLogger().log(Level.SEVERE, "Failed to connect to SQLite!");
+                    javaPlugin.getLogger().log(Level.SEVERE, "Failed to connect to SQLite!", e);
                 }
                 break;
             case "mysql":
                 try {
                     loginStrategy = new MySQLStrategy(javaPlugin);
                 } catch (Exception e) {
-                    javaPlugin.getLogger().log(Level.SEVERE, "Failed to connect to MySQL!");
+                    javaPlugin.getLogger().log(Level.SEVERE, "Failed to connect to MySQL!", e);
                 }
                 break;
         }
@@ -64,5 +64,11 @@ public class AuthenticationHandler {
         // We then save this in our access token.
         this.accessTokens.put(accessToken, username);
         return accessToken;
+    }
+
+    public boolean register (String username, String password) {
+        // We hash the raw password and register with the login strategy.
+        String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
+        return this.loginStrategy.register(username, hashedPass);
     }
 }
