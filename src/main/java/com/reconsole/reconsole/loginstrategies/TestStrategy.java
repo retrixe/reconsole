@@ -10,4 +10,12 @@ public class TestStrategy implements LoginStrategy {
     public boolean register (String username, String hashedPass) {
         return true;
     }
+
+    public boolean delete (String username) {
+        return true;
+    }
+
+    public boolean changepw (String username, String hashedPass) {
+        return true;
+    }
 }

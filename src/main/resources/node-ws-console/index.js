@@ -31,17 +31,25 @@ let file = fs.readFileSync(pathToLogs, { encoding: 'utf8' }).split('\n')
 const watcher = chokidar.watch(pathToLogs)
 watcher.on('ready', () => console.log(`[ReConsole WS Gateway] Watching ${pathToLogs} for changes.`))
 
-// When the file changes, we broadcast the change.
-watcher.on('change', async () => {
+// Function which updates the WebSocket clients and the gateway with the latest file.
+const updateClients = () => {
   // We read the file by line.
   const prev = file.length
-  file = fs.readFileSync(pathToLogs, { encoding: 'utf8' }).split('\n')
+  file = fs.readFileSync(pathToLogs, {encoding: 'utf8'}).split('\n')
   // Calculate the new lines.
   const diff = []
   for (let a = (prev - 1); a < file.length; a++) {
     diff.push(file[a])
   }
   wss.broadcast(diff.join('\n'))
+}
+
+// When the file changes, we broadcast the change.
+watcher.on('change', async () => {
+  updateClients()
+  setTimeout(updateClients, 250)
+  setTimeout(updateClients, 500)
+  setTimeout(updateClients, 750)
 })
 
 // Register events on the WebSocket server.

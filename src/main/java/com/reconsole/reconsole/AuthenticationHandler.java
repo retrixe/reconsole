@@ -66,9 +66,23 @@ public class AuthenticationHandler {
         return accessToken;
     }
 
-    public boolean register (String username, String password) {
+    boolean register (String username, String password) {
         // We hash the raw password and register with the login strategy.
         String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
         return this.loginStrategy.register(username, hashedPass);
+    }
+
+    boolean delete (String username) {
+        // True if success.
+        // False if account does not exist.
+        // Throw error if failed to delete.
+        return false;
+    }
+
+    boolean changepw (String username, String password) {
+        // True if success.
+        // False if account does not exist.
+        // Throw error if failed to delete.
+        return false;
     }
 }

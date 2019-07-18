@@ -1,6 +1,6 @@
 {
   "name": "node-ws-console",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "The WebSocket API for ReConsole, written with Node.js instead of Java.",
   "main": "index.js",
   "repository": "https://github.com/retrixe/ReConsole",
