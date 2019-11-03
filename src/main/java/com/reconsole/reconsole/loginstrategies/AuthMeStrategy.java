@@ -5,8 +5,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Method;
 
 public class AuthMeStrategy implements LoginStrategy {
+    private JavaPlugin plugin;
     public AuthMeStrategy(JavaPlugin javaPlugin) throws ClassNotFoundException {
         Class.forName("fr.xephi.authme.api.v3.AuthMeApi");
+        plugin = javaPlugin;
     }
 
     @Override
@@ -16,8 +18,10 @@ public class AuthMeStrategy implements LoginStrategy {
             Method getInstance = Class.forName("fr.xephi.authme.api.v3.AuthMeApi").getMethod("getInstance");
             Object api = getInstance.invoke(null);
             Method checkPassword = api.getClass().getMethod("checkPassword", String.class, String.class);
-            Object isValid = checkPassword.invoke(api, username, hashedPass);
-            return (boolean) isValid;
+            boolean isValid = (boolean)checkPassword.invoke(api, username, hashedPass);
+            return isValid && plugin.getServer().getOperators().stream().anyMatch(
+                    player -> player.getName().equals(username)
+            );
         } catch (Exception e) {
             e.printStackTrace();
             return false;

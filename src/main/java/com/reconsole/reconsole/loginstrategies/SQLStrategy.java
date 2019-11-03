@@ -15,6 +15,12 @@ public class SQLStrategy implements LoginStrategy {
                 section.getString("connection-url").replace("{df}", javaPlugin.getDataFolder().getPath()),
                 section.getString("username"),
                 section.getString("password"));
+        // Create the users table if it doesn't exist already.
+        PreparedStatement statement = connection.prepareStatement(
+                "CREATE TABLE IF NOT EXISTS users (username varchar(255), password varchar(255))"
+        );
+        boolean success = statement.execute();
+        if (!success) throw new SQLException("Unable to create users table! Logging into ReConsole will not work.");
     }
 
     @Override
