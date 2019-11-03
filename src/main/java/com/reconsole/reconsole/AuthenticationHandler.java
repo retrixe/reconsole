@@ -83,18 +83,13 @@ public class AuthenticationHandler {
         return this.loginStrategy.register(username, hashedPass);
     }
 
-    // TODO
     boolean delete (String username) {
-        // True if success.
-        // False if account does not exist.
-        // Throw error if failed to delete.
-        return false;
+        return this.loginStrategy.delete(username);
     }
 
     boolean changepw (String username, String password) {
-        // True if success.
-        // False if account does not exist.
-        // Throw error if failed to delete.
-        return false;
+        // We hash the raw password and change password with the login strategy.
+        String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
+        return this.loginStrategy.changepw(username, hashedPass);
     }
 }

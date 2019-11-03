@@ -19,9 +19,7 @@ public class AuthMeStrategy implements LoginStrategy {
             Object api = getInstance.invoke(null);
             Method checkPassword = api.getClass().getMethod("checkPassword", String.class, String.class);
             boolean isValid = (boolean)checkPassword.invoke(api, username, hashedPass);
-            return isValid && plugin.getServer().getOperators().stream().anyMatch(
-                    player -> player.getName().equals(username)
-            );
+            return isValid && plugin.getServer().getPlayerExact(username).hasPermission("ReConsole.use");
         } catch (Exception e) {
             e.printStackTrace();
             return false;
