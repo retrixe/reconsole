@@ -13,10 +13,6 @@ mongodb:
 sqlite:
   # Connection URL ({df} is replaced with the plugin data folder)
   connection-url: "jdbc:sqlite:{df}/sqlite.db"
-  # Username (leave as-is)
-  username: ""
-  # Password (leave as-is)
-  password: ""
 
 # MySQL configuration (ONLY NEEDED WHEN USING MySQL LOGIN METHOD)
 mysql:

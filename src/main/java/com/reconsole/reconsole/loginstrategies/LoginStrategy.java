@@ -5,4 +5,5 @@ public interface LoginStrategy {
   boolean register (String username, String hashedPass);
   boolean delete (String username);
   boolean changepw (String username, String hashedPass);
+
 }
