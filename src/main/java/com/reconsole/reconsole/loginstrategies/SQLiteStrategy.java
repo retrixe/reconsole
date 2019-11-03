@@ -16,6 +16,12 @@ public class SQLiteStrategy extends SQLStrategy {
         ConfigurationSection section = plugin.getConfig().getConfigurationSection("sqlite");
         connection = DriverManager.getConnection(
                 section.getString("connection-url").replace("{df}", plugin.getDataFolder().getPath()));
+        // Create the users table if it doesn't exist already.
+        PreparedStatement statement = connection.prepareStatement(
+                "CREATE TABLE IF NOT EXISTS users (username varchar(255), password varchar(255))"
+        );
+        boolean success = statement.execute();
+        if (!success) throw new SQLException("Unable to create users table! Logging into ReConsole will not work.");
     }
 
     @Override
