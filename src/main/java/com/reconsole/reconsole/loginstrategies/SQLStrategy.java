@@ -64,4 +64,23 @@ public class SQLStrategy implements LoginStrategy {
             return false;
         }
     }
+
+    @Override
+    public boolean delete (String username) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM users WHERE STRCMP(username, ?)");
+            statement.setString(1, username);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean changepw (String username, String hashedPass) {
+        // TODO: Proper implementation retaining user.
+        return this.delete(username) && this.register(username, hashedPass);
+    }
 }

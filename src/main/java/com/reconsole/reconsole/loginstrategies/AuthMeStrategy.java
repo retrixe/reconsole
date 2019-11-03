@@ -32,7 +32,9 @@ public class AuthMeStrategy implements LoginStrategy {
     @Override
     public boolean register (String username, String hashedPass) { return false; }
 
+    @Override
     public boolean delete (String username) { return false; }
 
+    @Override
     public boolean changepw (String username, String hashedPass) { return false; }
 }

@@ -49,6 +49,7 @@ public class MongoStrategy implements LoginStrategy {
         return true;
     }
 
+    @Override
     public boolean delete (String username) {
         // Get the users and attempt to delete a document.
         MongoCollection<Document> users = database.getCollection("users");
@@ -56,6 +57,7 @@ public class MongoStrategy implements LoginStrategy {
         return result.getDeletedCount() > 0; // If a document was deleted, it was successful.
     }
 
+    @Override
     public boolean changepw (String username, String hashedPass) {
         // Get the users and check if a user with this username exists.
         MongoCollection<Document> users = database.getCollection("users");
