@@ -26,8 +26,17 @@ public class AuthenticationHandler {
         loginStrategy = new TestStrategy();
         String strategy = javaPlugin.getConfig().getString("login-method");
 
-        // Available strategies when complete: mongodb, sqlite, mysql, authme, authme-mysql
+        // Available strategies: mongodb, sqlite, mysql, authme
         switch (strategy) {
+            case "authme":
+                try {
+                    loginStrategy = new AuthMeStrategy(javaPlugin);
+                } catch (Exception e) {
+                    javaPlugin.getLogger().log(
+                            Level.SEVERE, "Unable to find AuthMe API! You will be unable to log into ReConsole.", e
+                    );
+                }
+                break;
             case "mongodb":
                 loginStrategy = new MongoStrategy(javaPlugin);
                 break;
@@ -51,6 +60,7 @@ public class AuthenticationHandler {
     public String authenticate (String username, String password) {
         // We hash the raw password and authenticate with the login strategy.
         String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
+        if (loginStrategy instanceof AuthMeStrategy) hashedPass = password;
         boolean validCredentials = this.loginStrategy.authenticate(username, hashedPass);
 
         // If the credentials are invalid, we return null.
@@ -69,20 +79,17 @@ public class AuthenticationHandler {
     boolean register (String username, String password) {
         // We hash the raw password and register with the login strategy.
         String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
+        if (loginStrategy instanceof AuthMeStrategy) hashedPass = password;
         return this.loginStrategy.register(username, hashedPass);
     }
 
     boolean delete (String username) {
-        // True if success.
-        // False if account does not exist.
-        // Throw error if failed to delete.
-        return false;
+        return this.loginStrategy.delete(username);
     }
 
     boolean changepw (String username, String password) {
-        // True if success.
-        // False if account does not exist.
-        // Throw error if failed to delete.
-        return false;
+        // We hash the raw password and change password with the login strategy.
+        String hashedPass = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
+        return this.loginStrategy.changepw(username, hashedPass);
     }
 }

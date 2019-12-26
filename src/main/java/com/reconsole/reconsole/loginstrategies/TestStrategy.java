@@ -11,10 +11,12 @@ public class TestStrategy implements LoginStrategy {
         return true;
     }
 
+    @Override
     public boolean delete (String username) {
         return true;
     }
 
+    @Override
     public boolean changepw (String username, String hashedPass) {
         return true;
     }
