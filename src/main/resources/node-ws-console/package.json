@@ -10,6 +10,6 @@
   "dependencies": {
     "chokidar": "^2.1.5",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v15.9.0",
-    "ws": "^6.2.1"
+    "ws": "^7.4.6"
   }
 }
